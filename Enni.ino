@@ -31,6 +31,17 @@
 // Support for an "LED off mode"
 #include "LED-Off.h"
 
+#include "Kaleidoscope-LED-ActiveModColor.h"
+
+#include <Kaleidoscope-OneShot.h>
+#include <Kaleidoscope-TapDance.h>
+
+#include <Kaleidoscope-Unicode.h>
+#include <Kaleidoscope-HostOS.h>
+#include <Kaleidoscope/HostOS-select.h>
+
+#include <Kaleidoscope-LangPack-German.h>
+
 // Support for the "Boot greeting" effect, which pulses the 'LED' button for 10s
 // when the keyboard is connected to a computer (or that computer is powered on)
 #include "Kaleidoscope-LEDEffect-BootGreeting.h"
@@ -38,26 +49,26 @@
 // Support for LED modes that set all LEDs to a single color
 #include "Kaleidoscope-LEDEffect-SolidColor.h"
 
-// Support for an LED mode that makes all the LEDs 'breathe'
-#include "Kaleidoscope-LEDEffect-Breathe.h"
-
-// Support for an LED mode that makes a red pixel chase a blue pixel across the keyboard
-#include "Kaleidoscope-LEDEffect-Chase.h"
-
-// Support for LED modes that pulse the keyboard's LED in a rainbow pattern
-#include "Kaleidoscope-LEDEffect-Rainbow.h"
-
-// Support for an LED mode that lights up the keys as you press them
-#include "Kaleidoscope-LED-Stalker.h"
-
-// Support for an LED mode that prints the keys you press in letters 4px high
-#include "Kaleidoscope-LED-AlphaSquare.h"
-
 // Support for Keyboardio's internal keyboard testing mode
 #include "Kaleidoscope-Model01-TestMode.h"
 
 // Support for host power management (suspend & wakeup)
 #include "Kaleidoscope-HostPowerManagement.h"
+
+enum
+{
+    TD_SEMI_COLON
+};
+
+void tapDanceAction(uint8_t tap_dance_index, byte row, byte col, uint8_t tap_count, kaleidoscope::TapDance::ActionType tap_dance_action)
+{
+    switch (tap_dance_index)
+    {
+        case TD_SEMI_COLON:
+            return tapDanceActionKeys(tap_count, tap_dance_action, Key_Semicolon, LSHIFT(Key_Semicolon));
+    }
+}
+
 
 
 /** This 'enum' is a list of all the macros used by the Model 01's firmware
@@ -121,13 +132,14 @@ enum { MACRO_VERSION_INFO,
   *
   */
 
-enum { QWERTY, NUMPAD, FUNCTION }; // layers
+enum { QWERTY, NUMPAD, FUNCTION, MACRO }; // layers
 
 /* This comment temporarily turns off astyle's indent enforcement
  *   so we can make the keymaps actually resemble the physical key layout better
  */
 // *INDENT-OFF*
 
+#define R(n) (Key){.raw = kaleidoscope::language::n}
 const Key keymaps[][ROWS][COLS] PROGMEM = {
 
   [QWERTY] = KEYMAP_STACKED
@@ -135,14 +147,14 @@ const Key keymaps[][ROWS][COLS] PROGMEM = {
    Key_Backtick, Key_Q, Key_W, Key_E, Key_R, Key_T, Key_Tab,
    Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,
    Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
-   Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift,
+   OSM(LeftControl), Key_Spacebar, OSM(LeftAlt), OSM(LeftShift),
    ShiftToLayer(FUNCTION),
 
    M(MACRO_ANY),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
    Key_Enter,     Key_Y, Key_U, Key_I,     Key_O,         Key_P,         Key_Equals,
-                  Key_H, Key_J, Key_K,     Key_L,         Key_Semicolon, Key_Quote,
-   Key_RightAlt,  Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,
+                  Key_H, Key_J, Key_K,     Key_L,         TD(TD_SEMI_COLON), Key_Quote,
+   OSL(MACRO),  Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
+   OSM(LeftShift), Key_LeftGui, Key_Backspace, OSM(LeftControl),
    ShiftToLayer(FUNCTION)),
 
 
@@ -166,15 +178,30 @@ const Key keymaps[][ROWS][COLS] PROGMEM = {
    Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
    Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,
    Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
-   ___, Key_Delete, ___, ___,
+   ___, ___, ___, ___,
    ___,
 
    Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,          Key_F10,          Key_F11,
    Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_RightCurlyBracket,    Key_LeftBracket, Key_RightBracket, Key_F12,
                                Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,              Key_RightArrow,  ___,              ___,
    Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
-   ___, ___, Key_Enter, ___,
-   ___)
+   ___, ___, Key_Delete, ___,
+   ___),
+
+  [MACRO] =  KEYMAP_STACKED
+  (___,      ___,          ___, ___, ___, ___, ___,
+   ___,      ___,          ___, ___, ___, ___, ___,
+   ___, R(DEU_AU), R(DEU_SSCH), ___, ___, ___,
+   ___,      ___,          ___, ___, ___, ___, ___,
+   ___,      ___,          ___, ___,
+   ___,
+
+   M(MACRO_VERSION_INFO),  ___,       ___, ___,       ___, ___, ___,
+   ___,                    ___, R(DEU_UU), ___, R(DEU_OU), ___, ___,
+                           ___,       ___, ___,       ___, ___, ___,
+   ___,                    ___,       ___, ___,       ___, ___, ___,
+   ___, ___, ___, ___,
+   ___),
 
 };
 
@@ -210,7 +237,6 @@ static void anyKeyMacro(uint8_t keyState) {
     kaleidoscope::hid::pressKey(lastKey);
 }
 
-
 /** macroAction dispatches keymap events that are tied to a macro
     to that macro. It takes two uint8_t parameters.
 
@@ -244,11 +270,9 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 // Keyboardio Model 01.
 
 
-static kaleidoscope::LEDSolidColor solidRed(160, 0, 0);
+static kaleidoscope::LEDSolidColor solidWhite(160, 160, 170);
 static kaleidoscope::LEDSolidColor solidOrange(140, 70, 0);
 static kaleidoscope::LEDSolidColor solidYellow(130, 100, 0);
-static kaleidoscope::LEDSolidColor solidGreen(0, 160, 0);
-static kaleidoscope::LEDSolidColor solidBlue(0, 70, 130);
 static kaleidoscope::LEDSolidColor solidIndigo(0, 0, 170);
 static kaleidoscope::LEDSolidColor solidViolet(130, 0, 120);
 
@@ -304,30 +328,13 @@ void setup() {
     // We start with the LED effect that turns off all the LEDs.
     &LEDOff,
 
-    // The rainbow effect changes the color of all of the keyboard's keys at the same time
-    // running through all the colors of the rainbow.
-    &LEDRainbowEffect,
-
-    // The rainbow wave effect lights up your keyboard with all the colors of a rainbow
-    // and slowly moves the rainbow across your keyboard
-    &LEDRainbowWaveEffect,
-
-    // The chase effect follows the adventure of a blue pixel which chases a red pixel across
-    // your keyboard. Spoiler: the blue pixel never catches the red pixel
-    &LEDChaseEffect,
+    &ActiveModColorEffect,
 
     // These static effects turn your keyboard's LEDs a variety of colors
-    &solidRed, &solidOrange, &solidYellow, &solidGreen, &solidBlue, &solidIndigo, &solidViolet,
+    &solidWhite, &solidOrange, &solidYellow, &solidIndigo, &solidViolet,
 
-    // The breathe effect slowly pulses all of the LEDs on your keyboard
-    &LEDBreatheEffect,
-
-    // The AlphaSquare effect prints each character you type, using your
-    // keyboard's LEDs as a display
-    &AlphaSquareEffect,
-
-    // The stalker effect lights up the keys you've pressed recently
-    &StalkerEffect,
+    &OneShot,
+    &TapDance,
 
     // The numpad plugin is responsible for lighting up the 'numpad' mode
     // with a custom LED effect
@@ -335,6 +342,10 @@ void setup() {
 
     // The macros plugin adds support for macros
     &Macros,
+
+    &HostOS,
+    &Unicode,
+    &German,
 
     // The MouseKeys plugin lets you add keys to your keymap which move the mouse.
     &MouseKeys,
@@ -348,18 +359,9 @@ void setup() {
   // needs to be explicitly told which keymap layer is your numpad layer
   NumPad.numPadLayer = NUMPAD;
 
-  // We configure the AlphaSquare effect to use RED letters
-  AlphaSquare.color = { 255, 0, 0 };
+  ActiveModColorEffect.highlight_color = CRGB(0x00, 0xff, 0xff);
 
-  // We set the brightness of the rainbow effects to 150 (on a scale of 0-255)
-  // This draws more than 500mA, but looks much nicer than a dimmer effect
-  LEDRainbowEffect.brightness(150);
-  LEDRainbowWaveEffect.brightness(150);
-
-  // The LED Stalker mode has a few effects. The one we like is
-  // called 'BlazingTrail'. For details on other options,
-  // see https://github.com/keyboardio/Kaleidoscope-LED-Stalker
-  StalkerEffect.variant = STALKER(BlazingTrail);
+  OneShot.hold_time_out = 150;
 
   // We want the keyboard to be able to wake the host up from suspend.
   HostPowerManagement.enableWakeup();
@@ -379,4 +381,7 @@ void setup() {
 
 void loop() {
   Kaleidoscope.loop();
+  /* if (Layer.isOn(_PLOVER)) { */
+  /*   LEDControl.set_all_leds_to(CRGB(0x56, 0x80, 0x78)); */
+  /* } */
 }
