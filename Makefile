@@ -1,34 +1,25 @@
-DEFAULT_SKETCH="Enni"
-
-KALEIDOSCOPE_PATH = kaleidoscope
-OUTPUT_PATH = output
-
-BOOTSTRAPPED = $(shell git rev-parse --resolve-git-dir $(KALEIDOSCOPE_PATH)/.git &>/dev/null && echo 1 || echo 0)
-
 all: build
 
-bootstrap:
-ifeq ($(BOOTSTRAPPED), 0)
-	git clone --recursive -q -j8 https://github.com/keyboardio/Arduino-Boards $(KALEIDOSCOPE_PATH)
-	git clone https://github.com/ivanjonas/Kaleidoscope-LangPack-German.git lib/Kaleidoscope-LangPack-German
-endif
+kbd/keyboardio:
+	@echo "Building Docker countainter '$@'"
+	@docker build -q -t $@  .
+	@echo ""
 
-update: bootstrap
-ifeq ($(BOOTSTRAPPED), 1)
-	cd $(KALEIDOSCOPE_PATH) && git pull --recurse-submodules -q -j8
-	cd lib &&  git pull --recurse-submodules -q -j8
-endif
+run-docker: kbd/keyboardio
+	@docker run --rm -it -v $(shell pwd):/Enni -v /dev:/dev --privileged --workdir /Enni $<
 
-clean:
-	rm -rf $(KALEIDOSCOPE_PATH) $(OUTPUT_PATH) lib
+build: kbd/keyboardio
+	@docker run --rm -v $(shell pwd):/Enni --workdir /Enni $< ./firmware -j$(shell nproc) compile
 
-build: bootstrap
-	OUTPUT_PATH=$(OUTPUT_PATH) \
-	EXTRA_BUILDER_ARGS="-libraries lib" \
-	$(KALEIDOSCOPE_PATH)/libraries/Kaleidoscope/bin/kaleidoscope-builder build-all
+flash: kbd/keyboardio
+	@echo "Start Flashing"
+	@echo ""
+	@echo " ################################################################# "
+	@echo "#                                                                 #"
+	@echo "#  Hold the PROG button until it lights up then also press ENTER  #"
+	@echo "#                                                                 #"
+	@echo " ################################################################# "
+	@echo " ... any key to continue ..."
+	@read -p "" -n1 -s
+	@docker run --rm -v $(shell pwd):/Enni -v /dev:/dev --privileged --workdir /Enni $< ./firmware -j$(shell nproc) flash
 
-flash: bootstrap
-	DEFAULT_SKETCH=$(DEFAULT_SKETCH) \
-	OUTPUT_PATH=$(OUTPUT_PATH) \
-	EXTRA_BUILDER_ARGS="-libraries lib" \
-	$(KALEIDOSCOPE_PATH)/libraries/Kaleidoscope/bin/kaleidoscope-builder flash
