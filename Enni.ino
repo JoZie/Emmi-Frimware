@@ -216,10 +216,10 @@ KEYMAPS(
    Key_LeftShift, Key_Spacebar, Key_LeftAlt, Key_LeftControl,
    ShiftToLayer(FUNCTION),
 
-   M(MACRO_ANY), Key_6, Key_7,  Key_8,     Key_9,      Key_0,          LockLayer(NUMPAD),
-   Key_Enter,    Key_Y, Key_U,  Key_I,     Key_O,      Key_P,          Key_Equals,
-                 Key_H, Tap(J), Key_K,     Key_L,      Tap(Semicolon), Tap(Quote),
-   OSL(LANG),    Key_N, Key_M,  Key_Comma, Key_Period, Key_Slash,      Key_Minus,
+   M(MACRO_ANY), Key_6, Key_7, Key_8,     Key_9,      Key_0,         LockLayer(NUMPAD),
+   Key_Enter,    Key_Y, Key_U, Key_I,     Key_O,      Key_P,         Key_Equals,
+                 Key_H, Key_J, Key_K,     Key_L,      Key_Semicolon, Tap(Quote),
+   OSL(LANG),    Key_N, Key_M, Key_Comma, Key_Period, Key_Slash,     Key_Minus,
 
    Key_RightControl, Key_LeftGui, Key_Backspace, Key_RightShift,
    ShiftToLayer(PROGRAMMING)),
@@ -232,10 +232,10 @@ KEYMAPS(
    ___, ___, ___, ___,
    ___,
 
-   Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,          Key_F10,          Key_F11,
-   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_RightCurlyBracket,    Key_LeftBracket, Key_RightBracket, Key_F12,
-                               Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,              Key_RightArrow,  ___,              ___,
-   Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
+   Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,         Key_F10,       Key_F11,
+   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, XXX,                      XXX,                      XXX,            XXX,           Key_F12,
+                               Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,              Key_RightArrow, ___,           ___,
+   Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,            Key_Backslash, Key_Pipe,
    ___, ___, Key_Delete, ___,
    ___),
 
@@ -566,7 +566,8 @@ void setup() {
   // The color to use for highlighting the modifiers.
   ActiveModColorEffect.highlight_color = CRGB(0x00, 0xff, 0xff);
 
-  LEDActiveLayerColorEffect.setColormap(layerColormap);
+  // A per-layer color
+  // LEDActiveLayerColorEffect.setColormap(layerColormap);
 
   // Reduce the TapDance timeout
   TapDance.time_out = 180;
