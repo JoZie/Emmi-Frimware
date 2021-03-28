@@ -240,17 +240,17 @@ KEYMAPS(
    ___),
 
   [PROGRAMMING] =  KEYMAP_STACKED
-  (___, ___,           ___,               ___,             ___,                  ___,           ___,
-   ___, LSHIFT(Key_1), LSHIFT(Key_2),     LSHIFT(Key_3),   LSHIFT(Key_4),        LSHIFT(Key_5), ___,
-   ___, ___,           LSHIFT(Key_Comma), Key_LeftBracket, Key_LeftCurlyBracket, Key_LeftParen,
-   ___, ___,           ___,               ___,             ___,                  Tap(LBracket), ___,
+  (___, ___,               ___,             ___,           ___,                  ___,           ___,
+   ___, LSHIFT(Key_1),     LSHIFT(Key_2),   LSHIFT(Key_3), LSHIFT(Key_4),        LSHIFT(Key_5), ___,
+   ___, LSHIFT(Key_Comma), Key_LeftBracket, Key_LeftParen, Key_LeftCurlyBracket, ___,
+   ___, ___,               ___,             ___,           ___,                  Tap(LBracket), ___,
    ___, ___, ___, ___,
    ___,
 
-   ___, ___,            ___,                   ___,              ___,                ___,           ___,
-   ___, LSHIFT(Key_6),  LSHIFT(Key_7),         LSHIFT(Key_8),    LSHIFT(Key_9),      LSHIFT(Key_0), ___,
-        Key_RightParen, Key_RightCurlyBracket, Key_RightBracket, LSHIFT(Key_Period), ___,           ___,
-   ___, Tap(RBracket),  ___,                   ___,              ___,                Key_Backslash, Key_Pipe,
+   ___, ___,            ___,                   ___,            ___,              ___,                ___,
+   ___, LSHIFT(Key_6),  LSHIFT(Key_7),         LSHIFT(Key_8),  LSHIFT(Key_9),    LSHIFT(Key_0),      ___,
+        ___,            Key_RightCurlyBracket, Key_RightParen, Key_RightBracket, LSHIFT(Key_Period), ___,
+   ___, Tap(RBracket),  ___,                   ___,            ___,              Key_Backslash,      Key_Pipe,
    ___, ___, ___, ___,
    ___),
 
